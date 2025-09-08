@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malvin PAIR CODE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      overflow: hidden;              /* 🚫 Prevent any scrolling */
+      overscroll-behavior: none;     /* 🚫 Prevent bounce/elastic scroll */
+      touch-action: none;            /* 🚫 Disable swipe dragging */
+    }
+
+    #particles-js {
+      position: absolute; 
+      width: 100%; height: 100%; 
+      background: url('https://i.ibb.co/bM6pw4vf/malvin-xd.jpg') no-repeat center center fixed; 
+      background-size: cover; 
+      z-index: 0;
+    }
+
+    .overlay {
+      position: absolute; width: 100%; height: 100%;
+      backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .container {
+      z-index: 2;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+      background: rgba(255,255,255,0.10);
+      border-radius: 1.5rem;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255,255,255,0.20);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+
+    h2 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    h4 { font-weight: 400; font-size: 0.95rem; margin-bottom: 1rem; color: #ccc; }
+
+    .input-group {
+      display: flex; gap: 0.5rem;
+      border-radius: 0.8rem; margin-bottom: 1.2rem; flex-wrap: wrap;
+      animation: floatUp 0.7s ease-in-out;
+    }
+
+    .input-group input {
+      flex: 1; padding: 0.9rem; font-size: 1rem;
+      border: none; border-radius: 0.8rem;
+      background: rgba(255,255,255,0.85); color: #000;
+    }
+
+    .input-group button {
+      padding: 0.9rem 1.2rem; background: linear-gradient(to right, #00c6ff, #0072ff);
+      border: none; color: white; font-weight: bold; cursor: pointer;
+      border-radius: 0.8rem; transition: all 0.3s ease;
+    }
+
+    .input-group button:hover {
+      background: linear-gradient(to right, #43e97b, #38f9d7); color: #000;
+    }
+
+    .status, #pairResult { margin-top: 1rem; font-weight: bold; }
+
+    .glow-text {
+      margin-top: 2rem; font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px #f0f, 0 0 10px #f0f, 0 0 20px #0ff;
+      animation: glowPulse 3s infinite;
+    }
+
+    .copy-code {
+      cursor: pointer; background: rgba(255,255,255,0.15);
+      padding: 0.8rem; border-radius: 0.5rem;
+      color: yellow; margin-top: 1rem; transition: 0.2s;
+      word-break: break-all;
+    }
+
+    .copy-code:hover { background: rgba(255,255,255,0.4); color: #000; }
+
+    .spinner {
+      display: inline-block; width: 24px; height: 24px;
+      border: 3px solid #fff; border-top: 3px solid #00eaff;
+      border-radius: 50%; animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes floatUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes glowPulse { 0% { text-shadow: 0 0 5px #f0f; } 50% { text-shadow: 0 0 15px #0ff; } 100% { text-shadow: 0 0 5px #f0f; } }
+
+    .music-icon {
+      position: fixed; bottom: 10px; right: 15px;
+      color: #fff; font-size: 1.6rem; z-index: 3;
+      animation: pulse 2s infinite; cursor: pointer; user-select: none;
+    }
+
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:0.8;} 50%{transform:scale(1.2);opacity:1;} }
+
+    @media (max-width: 480px) {
+      .input-group { flex-direction: column; }
+      .input-group input, .input-group button { width: 100%; border-radius: 0.8rem; }
+      .container { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🔊 Music -->
+<audio id="background-music" autoplay loop hidden>
+  <source src="https://files.catbox.moe/tvw1kz.mp3" type="audio/mpeg" />
+</audio>
+<div class="music-icon" id="music-toggle" title="Toggle Music">
+  <i class="fas fa-music"></i>
+</div>
+
+<!-- 🌌 Background & blur -->
+<div id="particles-js"></div>
+<div class="overlay"></div>
+
+<!-- 🧊 Main UI -->
+<div class="container">
+  <h2><i class="fa-solid fa-user-gear"></i> Malvin PAIR</h2>
+  <h4>⚙ Enter your WhatsApp number with country code ⚙</h4>
+
+  <div class="input-group">
+    <input type="number" id="number" placeholder="2637XXXXXXX" autocomplete="off" />
+    <button id="submit">Pair</button>
+  </div>
+
+  <div id="status" class="status"></div>
+  <div id="pairResult"></div>
+
+  <div class="glow-text">⚡ Powered by Malvin King ⚡</div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+  // Particles BG
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 50 },
+      color: { value: "#ffffff" },
+      shape: { type: "circle" },
+      opacity: { value: 0.3 },
+      size: { value: 3 },
+      move: { enable: true, speed: 2 }
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: { onhover: { enable: true, mode: "repulse" } }
+    }
+  });
+
+  // Music toggle
+  const musicToggle = document.getElementById("music-toggle");
+  const music = document.getElementById("background-music");
+  musicToggle.addEventListener("click", () => {
+    if (music.paused) {
+      music.play();
+      musicToggle.innerHTML = '<i class="fas fa-music"></i>';
+    } else {
+      music.pause();
+      musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    }
+  });
+
+  // Copy to clipboard helper
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      document.getElementById("status").innerText = "✅ Copied to clipboard!";
+    } catch {
+      document.getElementById("status").innerText = "❌ Failed to copy.";
+    }
+  }
+
+  // Pair button logic
+  const submitBtn = document.getElementById("submit");
+  const numberInput = document.getElementById("number");
+  const statusText = document.getElementById("status");
+  const resultDiv = document.getElementById("pairResult");
+
+  submitBtn.addEventListener("click", async () => {
+    const raw = numberInput.value.trim();
+    if (!raw || raw.length < 11) {
+      statusText.innerHTML = "❗ Please enter a valid number.";
+      return;
+    }
+    statusText.innerHTML = '<div class="spinner"></div>';
+    resultDiv.innerHTML = '';
+    const number = raw.replace(/[^0-9]/g, "");
+
+    try {
+      const res = await axios(`/code?number=${number}`);
+      const code = res.data.code || "Unavailable";
+      resultDiv.innerHTML = `<div class="copy-code" onclick="copyToClipboard('${code}')">CODE: ${code}</div>`;
+      statusText.innerHTML = "";
+    } catch {
+      statusText.innerText = "❌ Failed to fetch code.";
+      resultDiv.innerHTML = "";
+    }
+  });
+</script>
+</body>
+</html>
